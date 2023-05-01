@@ -1,4 +1,3 @@
-// Package service_duplicator
 package service_duplicator
 
 import (
