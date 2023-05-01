@@ -4,7 +4,7 @@ package service_duplicator
 import (
 	"context"
 //        "fmt"
-//        "log"
+        "log"
 //        "strings"
 	"net/http"
 //	"net/http/httputil"
@@ -86,6 +86,7 @@ func (a *ServiceDup) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
 	//Modify the Middleware list
 	//(optionally)Modify the amount of instances?
      //Create all new elements
-     //a.provider.Client.AppsV1().Services(config.Namespace)
+     services := a.provider.Client.CoreV1().Services(a.config.Namespace)
+     log.Printf("services: %s", services)
      a.next.ServeHTTP(rw, req)
 }
