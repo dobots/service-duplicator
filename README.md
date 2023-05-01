@@ -1,9 +1,11 @@
 # Reverse proxy based on a header's value 
 
-(This code is based on the code (and takes inspiration) from: https://github.com/vidosits/header-pattern-proxy)
-This middleware can be used to reverse proxy a request based on a headers value, e.g. based on the value of `X-Forwarded-User` from something like [thomseddon/traefik-forward-auth](https://github.com/thomseddon/traefik-forward-auth).
+(This code is based on the code (and takes inspiration) from: https://github.com/acouvreur/sablier)
+This middleware can be used to manage the automatic deployment and scaling of services in Kubernetes, for the purpose of setting up a personal environment for the logged in user.
 
-Compared to the original setup, this version allows more complex, dynamic target URLs, partially based on the original URL and the header field. The code also contains better caching, for better performance.
+Compared to the original application (Sablier), this is a much more specialized, focused plugin for a very specific task.
+
+It main purpose: based on a header field, check to see if there exists a specific service. If not, copy-n-modify a generic example service to provide the requested service.
 
 
 ## Configuration
@@ -18,8 +20,8 @@ Production:
 [experimental]
   [experimental.plugins]
     [experimental.plugins.my-plugin-name]
-      moduleName = "github.com/dobots/multiplexer-proxy
-      version = "v1.0.0"
+      moduleName = "github.com/dobots/service-duplicator
+      version = "v0.0.2"
 ```
 
 or if you're using [devMode](https://doc.traefik.io/traefik-pilot/plugins/plugin-dev/#developer-mode):
@@ -30,8 +32,8 @@ or if you're using [devMode](https://doc.traefik.io/traefik-pilot/plugins/plugin
   
 [experimental.devPlugin]
   goPath = "/plugins/go"
-  moduleName = "github.com/dobots/multiplexer-proxy"
-  # Plugin will be loaded from '/plugins/go/src/github.com/dobots/multiplexer-proxy'
+  moduleName = "github.com/dobots/service-duplicator"
+  # Plugin will be loaded from '/plugins/go/src/github.com/dobots/service-duplicator'
 ```
 
 ### Dynamic:
@@ -43,8 +45,7 @@ Production:
   [http.middlewares]
     [http.middlewares.my-middleware-name.plugin.my-plugin-name]
       header  = "X-Forwarded-User"
-      target_match = "^([^.]+).(.*)$"         #If not matching, keep original URL
-      target_replace = "$1-${header}.$2"      #Normal (go-lang) regexp rules, ${header} is replaced by the matched header value (URLEncoded)
+      namespace = "myk8snamespace"
 
   [http.routers]
     [http.routers.my-router-name]
@@ -66,8 +67,7 @@ or if you're using [devMode](https://doc.traefik.io/traefik-pilot/plugins/plugin
   [http.middlewares]
     [http.middlewares.my-middleware-name.plugin.dev]
       header  = "X-Forwarded-User"
-      target_match = "^([^.]+).(.*)$"         #If not matching, keep original URL
-      target_replace = "$1-${header}.$2"      #Normal (go-lang) regexp rules, ${header} is replaced by the matched header value (URLEncoded)
+      namespace = "myk8snamespace"
 
   [http.routers]
     [http.routers.my-router-name]
