@@ -1,0 +1,9 @@
+displayName: Automatically provision a new copy service and corresponding workload in Kubernetes
+type: middleware
+
+import: github.com/dobots/service_duplicator
+
+summary: "Based on the X-Forwarded-User header, copy a generic Service to a user specific Service."
+
+testData:
+  Header: 'X-Forwarded-User'
